@@ -7,6 +7,7 @@ function App() {
     acertou: "0",
     imagem: "000",
     score: "0000",  // Valor em hexadecimal (ex: "0F")
+    score_dec: "0", // Valor decimal (ex: 15)
     reset: "0"
   });
 
@@ -22,7 +23,7 @@ function App() {
   }, []);
 
   // Converte o score em hexadecimal para decimal
-  const scoreDecimal = parseInt(signals.score, 16);
+  //const scoreDecimal = parseInt(signals.score, 16);
 
   // Mapeia o código da imagem para o nome do arquivo
   const imageMap = {
@@ -52,7 +53,8 @@ function App() {
         </div>
         <div className="info-card">
           <h2>Score</h2>
-          <p><span>{scoreDecimal}</span></p>
+          {/* <p><span>{scoreDecimal}</span></p> */}
+          <p><span>{signals.score_dec}</span></p>
         </div>
         <div className="info-card">
           <h2>Reset</h2>

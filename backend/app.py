@@ -3,6 +3,8 @@ from flask_cors import CORS  # Permite acesso de origens diferentes
 import threading
 import time
 from WF_SDK import device, static, supplies
+from WF_SDK.pattern import generate, function
+
 
 app = Flask(__name__)
 CORS(app)  # Habilita CORS para todas as rotas
@@ -28,6 +30,8 @@ sup_data.master_state = True
 sup_data.state = True
 sup_data.voltage = 3.3
 supplies.switch(device_data, sup_data)
+
+generate(device_data, 0, function.pulse, 1000, duty_cycle=50)
 
 # Configura os pinos 1 a 10 como entradas
 for pin in range(1, 11):
