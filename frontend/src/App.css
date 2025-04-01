@@ -1,94 +1,172 @@
-/* Para usar a fonte "Roboto", adicione este link dentro de public/index.html:
-   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-*/
+/* Importa uma fonte retrô para dar a cara de jogo arcade */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-body {
+html, body {
   margin: 0;
   padding: 0;
-  background: linear-gradient(135deg, #ffe3e3, #ffffff);
-  font-family: 'Roboto', sans-serif;
-  color: #333;
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1d1f20, #3a3f44);
+  font-family: 'Press Start 2P', cursive;
+  color: #f0f0f0;
 }
 
+/* Container principal ocupando toda a tela e centralizando o conteúdo */
 .game-container {
-  max-width: 1000px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: #fff;
+  height: 90vh;
+  max-width: 1100px;
+  margin: 0 auto;
+  margin-top: 50px;
+  background: #24282f;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
   text-align: center;
-  border: 3px solid #ff6f61;
+  border: 3px solid #ff4081;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
+/* Header com efeito neon */
 .game-header h1 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  color: #ff6f61;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #ff4081;
+  text-shadow: 2px 2px 4px #000;
+  animation: neonGlow 1.5s infinite alternate;
 }
 
+/* Animações de destaque */
+@keyframes pulse-highlight {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.highlight-green {
+  border: 3px solid #00ff7f !important;
+  animation: pulse-highlight 2s ease;
+  color: #00ff7f !important;
+}
+
+/* Sobrescreve a cor do texto interno quando o contêiner está com highlight-green */
+.highlight-green h2,
+.highlight-green p {
+  color: #00ff7f !important;
+}
+
+.highlight-red {
+  border: 3px solid #ff4d4d !important;
+  animation: pulse-highlight 2s ease;
+  color: #ff4d4d !important;
+}
+
+.highlight-red h2,
+.highlight-red p {
+  color: #ff4d4d !important;
+}
+
+
+@keyframes neonGlow {
+  from {
+    text-shadow: 0 0 5px #ff4081, 0 0 10px #ff4081, 0 0 15px #ff4081;
+  }
+  to {
+    text-shadow: 0 0 10px #ff4081, 0 0 15px #ff4081, 0 0 20px #ff4081;
+  }
+}
+
+/* Ajusta a área de informações para caber melhor na tela */
 .game-info {
   display: flex;
   justify-content: space-around;
-  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  margin: 0.5rem 0;
+  gap: 0.5rem;
 }
 
+/* Cards de informação compactos */
 .info-card {
-  background: #fdfdfd;
-  border: 2px solid #ff6f61;
+  background: #2a2e36;
+  border: 2px solid #ff4081;
   border-radius: 10px;
-  width: 220px;
-  margin: 10px;
-  padding: 20px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.info-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  width: 45%;
+  max-width: 220px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  justify-content: center;
 }
 
 .info-card h2 {
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-  color: #ff6f61;
+  font-size: 0.8rem;
+  margin-bottom: 5px;
+  color: #ff4081;
 }
 
 .info-card p {
-  font-size: 1.1rem;
+  font-size: 0.8rem;
   margin: 0;
   font-weight: bold;
+  color: #f0f0f0;
 }
 
+/* Área da imagem com pulsação, adaptada para caber na tela */
 .game-display {
-  margin-bottom: 2rem;
+  padding: 10px;
+  border: 2px dashed #ff4081;
+  border-radius: 10px;
+  background: #1f2329;
+  animation: pulsate 1.5s infinite;
+  margin: 0.5rem 0;
 }
 
 .game-display h2 {
-  font-size: 1.8rem;
-  margin-bottom: 15px;
-  color: #ff6f61;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  color: #ff4081;
+}
+
+@keyframes pulsate {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .game-display img {
-  width: 300px;
+  width: 80%;
+  max-width: 400px;
   height: auto;
-  border: 2px solid #ff6f61;
+  border: 2px solid #ff4081;
   border-radius: 10px;
   padding: 5px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
-.game-display img:hover {
-  transform: scale(1.05);
-}
-
+/* Footer simples e compacto */
 .game-footer {
-  margin-top: 20px;
+  margin-top: 0.5rem;
 }
 
 .game-footer p {
-  font-size: 1rem;
-  color: #666;
+  font-size: 0.7rem;
+  color: #aaa;
+  margin-bottom: 20px;
 }

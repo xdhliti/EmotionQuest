@@ -7,9 +7,8 @@ from WF_SDK.pattern import generate, function
 
 
 app = Flask(__name__)
-CORS(app)  # Habilita CORS para todas as rotas
+CORS(app) 
 
-# Variável global para armazenar os sinais atuais lidos do dispositivo
 current_signals = {
     "inicializar": "0",
     "acertou": "0",
@@ -19,25 +18,20 @@ current_signals = {
     "reset": "0"
 }
 
-# Conecta e configura o dispositivo
 device_name = "Analog Discovery 2"
 device_data = device.open()
 device.name = device_name
-
-# Configura a fonte de alimentação para 3.3V (caso necessário para o circuito)
 sup_data = supplies.data()
 sup_data.master_state = True
 sup_data.state = True
 sup_data.voltage = 3.3
 supplies.switch(device_data, sup_data)
-
 generate(device_data, 0, function.pulse, 1000, duty_cycle=50)
 
 # Configura os pinos 1 a 10 como entradas
 for pin in range(1, 11):
     static.set_mode(device_data, pin, False)
 
-# Função que faz o polling contínuo dos sinais de entrada
 def poll_input():
     global current_signals
     while True:
@@ -92,7 +86,6 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print("Encerrado pelo usuário.")
     finally:
-        # Finaliza a comunicação com o dispositivo de forma segura
         static.close(device_data)
         sup_data.master_state = False
         supplies.switch(device_data, sup_data)
