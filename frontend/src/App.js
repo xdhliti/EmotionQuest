@@ -6,13 +6,12 @@ function App() {
   const [signals, setSignals] = useState({
     inicializar: "0",
     acertou: "0",
-    imagem: "000",
+    imagem: "0000",
     score: "0000",
     score_dec: "0",
-    reset: "0"
+    reset: "0",
+    nivel: "0"
   });
-
-
 
   const [highlight, setHighlight] = useState({
     inicializar: false,
@@ -22,7 +21,6 @@ function App() {
   });
 
   const prevScoreRef = useRef("0");
-  //const prevResetRef = useRef("1");
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -31,55 +29,75 @@ function App() {
         .then(data => {
           const newHighlight = { ...highlight };
           console.log('signals', signals);
-  
+
           if (data.inicializar === "1" && data.reset === "0") {
             newHighlight.inicializar = true;
           } else {
             newHighlight.inicializar = false;
           }
-  
+
           if (data.acertou === "1" && signals.acertou !== "1") {
             newHighlight.acertou = true;
             setTimeout(() => {
               setHighlight(prev => ({ ...prev, acertou: false }));
             }, 1000);
           }
-  
+
           if (data.reset === "1" && signals.reset !== "1") {
             newHighlight.reset = true;
           } else {
             newHighlight.reset = false;
           }
-  
+
           if (parseInt(data.score_dec) > parseInt(prevScoreRef.current)) {
             newHighlight.score = true;
             setTimeout(() => {
               setHighlight(prev => ({ ...prev, score: false }));
             }, 1000);
           }
-  
+
           setSignals(data);
           prevScoreRef.current = data.score_dec;
-          //prevResetRef.current = data.reset;
           setHighlight(newHighlight);
         })
         .catch(error => console.error('Erro ao buscar sinais:', error));
     }, 200);
-  
+
     return () => clearInterval(interval);
   }, [signals]);
 
+  const matrizOpcoes = [
+    ["feliz", "triste", "raiva", "confuso"],
+    ["feliz", "triste", "raiva", "confuso"],
+    ["feliz", "triste", "raiva", "confuso"],
+    ["feliz", "triste", "raiva", "confuso"],
+    ["feliz", "triste", "raiva", "confuso"],
+    ["feliz", "triste", "raiva", "confuso"],
+    ["feliz", "triste", "raiva", "confuso"],
+  ];
 
   const imageMap = {
-    "001": "feliz.png",
-    "010": "imagem2.png",
-    "011": "imagem3.png",
-    "100": "imagem4.png"
+    "0000": "feliz.png",
+    "0001": "triste.jpg",
+    "0010": "raiva.jpg",
+    "0011": "surpreso.jpg",
+    "0100": "medo.jpg",
+    "0101": "nojo.jpg",
+    "0110": "desprezo.jpg",
+    "0111": "duvida.jpg",
+    "1000": "tedio.jpg",
+    "1001": "interesse.jpg",
+    "1010": "vergonha.jpg",
+    "1011": "apaixonado.jpg",
+    "1100": "cansado.jpg",
+    "1101": "dor.jpg",
+    "1110": "empolgacao.jpg",
   };
 
-  const imageSrc = imageMap[signals.imagem]
-    ? `http://localhost:5000/static/${imageMap["001"]}`
+  const imageSrc = imageMap[signals.imagem] && signals.inicializar === "1"
+    ? `http://localhost:5000/static/${imageMap[signals.imagem]}`
     : loading;
+
   const isLoading = imageMap[signals.imagem] ? false : true;
   const imgText = isLoading ? "Carregando..." : "Adivinhe a emoção da imagem!";
 
@@ -108,6 +126,15 @@ function App() {
       <div className="game-display">
         <h2>{imgText}</h2>
         <img src={imageSrc} alt="Advinhe a emoção com base na imagem!" />
+      </div>
+
+      {/* Adicionando os cards de opção abaixo da imagem */}
+      <div className="options-container">
+        {matrizOpcoes[0].map((opcao, index) => (
+          <div key={index} className="option-card">
+            <h3>{opcao}</h3>
+          </div>
+        ))}
       </div>
 
       <footer className="game-footer">

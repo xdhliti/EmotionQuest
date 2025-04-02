@@ -11,11 +11,11 @@ CORS(app)
 
 current_signals = {
     "inicializar": "0",
-    "acertou": "0",
     "imagem": "000",
     "score": "0000",   # 4 bits para score
     "score_dec": 0,
-    "reset": "0"
+    "reset": "0",
+    "dificuldade": "0"
 }
 
 device_name = "Analog Discovery 2"
@@ -26,44 +26,61 @@ sup_data.master_state = True
 sup_data.state = True
 sup_data.voltage = 3.3
 supplies.switch(device_data, sup_data)
+
 generate(device_data, 0, function.pulse, 1000, duty_cycle=50)
 
+print("Dispositivo aberto com sucesso.")
 # Configura os pinos 1 a 10 como entradas
-for pin in range(1, 11):
+for pin in range(1, 12):
     static.set_mode(device_data, pin, False)
+import random
 
 def poll_input():
     global current_signals
+    last_print_time = time.time()
+    print_interval = random.uniform(1, 2)  # define o intervalo inicial aleatório entre 1 e 2 segundos
     while True:
         # Sinal de inicializar (pino 1)
         init_signal = 1 if static.get_state(device_data, 1) else 0
-        # Sinal de acertou (pino 2)
-        acertou_signal = 1 if static.get_state(device_data, 2) else 0
+        # Sinal de reset (pino 2)
+        reset_signal = 1 if static.get_state(device_data, 2) else 0
 
-        # Sinal da imagem (3 bits: pinos 3, 4 e 5)
+        # Sinal da imagem (3 bits: pinos 3, 4, 5 e 6)
         imagem_val = 0
-        for i in range(3, 6):
-            if static.get_state(device_data, i):
-                imagem_val |= (1 << (i - 3))
-        imagem_str = format(imagem_val, '03b')
+        current_time = time.time()
+        if current_time - last_print_time >= print_interval:
+            for i in range(3, 7):
+                if static.get_state(device_data, i):
+                    print(f"Pin {i} : 1")
+                    imagem_val |= (1 << (i - 3))
+                else:
+                    print(f"Pin {i} : 0")
+            last_print_time = current_time
+            print_interval = random.uniform(1, 2)  # novo intervalo para a próxima impressão
+        else:
+            for i in range(3, 7):
+                if static.get_state(device_data, i):
+                    imagem_val |= (1 << (i - 3))
 
-        # Sinal do score (4 bits: pinos 6, 7, 8 e 9)
+        imagem_str = format(imagem_val, '04b')
+
+        # Sinal do score (4 bits: pinos 7, 8, 9 e 10)
         score_val = 0
-        for i in range(6, 10):
+        for i in range(7, 11):
             if static.get_state(device_data, i):
-                score_val |= (1 << (i - 6))
+                score_val |= (1 << (i - 7))
         score_str = format(score_val, '04b')
 
-        # Sinal de reset (pino 10)
-        reset_signal = 1 if static.get_state(device_data, 10) else 0
+        # Sinal de dificuldade (pino 11)
+        dificuldade_signal = 1 if static.get_state(device_data, 11) else 0
 
         current_signals = {
             "inicializar": str(init_signal),
-            "acertou": str(acertou_signal),
             "imagem": imagem_str,
             "score": score_str,
             "score_dec": score_val,
-            "reset": str(reset_signal)
+            "reset": str(reset_signal),
+            "dificuldade": str(dificuldade_signal)
         }
         time.sleep(0.01)  # atualiza a cada 10ms
 
